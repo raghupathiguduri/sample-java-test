@@ -14,18 +14,10 @@ pipeline {
     }
     stage('Build App') {
       steps {
-        mvnBuild()
+            withCredentials([usernamePassword(credentialsId: 'nexus', usernameVariable: 'username', passwordVariable: 'password')]) {
+                mvnBuild()
+            }
       }
-    }
-    stage('Docker Build') {
-      when {
-        expression { params.BRANCH == 'develop' }
-      }
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'nexus', usernameVariable: 'username', passwordVariable: 'password')]) {
-          DockerBuild(BUILD_NUMBER, username, password)
-        }
-      }
-    }
+    }  
   }
 }
